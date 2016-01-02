@@ -1,0 +1,46 @@
+---
+title: "Inventory Code Book"
+author: "Logan Calder"
+date: "August 25, 2015"
+output: html_document
+---
+
+## Files
+
+Inventory forecasts are built from what ever records of weekly orders you save
+in the working directory. For our purposes, the "working directory" will be the 
+computer folder that also contains the R code. 
+
+* files with titles "skuOrders[date mm-dd-yyyy].csv" - these files should 
+contain the weekly count of Units.Ordered for every SKU, with one column titled "SKU" 
+and one other column titled "Units.Ordred". Their should be several of these
+files, one for every week of relevant history, in the working directory.
+* files with titles "InventoryInStockReport-30Day[date mm-dd-yyyy].csv" - these files 
+should contain recent inventory levels for every SKU in the Amazon wareshouse. They 
+are downloaded from "https://sellercentral.amazon.com/hz/sellingcoach/inventory". 
+Only the most recent of these files should be kept in the working directory.
+
+
+
+## Inventory Status Tables
+
+* SKU - Product SKU
+* slope - I need to look into this. But it gives an idea of the growth of the product sales.
+* sampleSize - how many weeks of data we have on the product, excluding outliers
+* Current.Inventory - Inventory level reported by Amazon. Taken directly from 
+downloaded inventory report. This is only as current as the last downloaded data.
+* fromMax90DayNeeds - The level of inventory needed for 13 weeks (90 days)
+if the maximum level of weekly Units.Ordered from the given weeks were to continue
+* fromMean90DayNeeds - The level of inventory needed for 13 weeks if the average 
+level of weekly Units.Ordered from the given weeks were to continue.
+* lm90DayNeeds - Level of inventory needed for 13 weeks if the trend predicted by the 
+linear model were to continue
+
+
+## Outliers
+The number of Units.Ordered for a SKU in a week can be considered an outlier if it is 
+far bigger or smaller than most other weekly counts of Units.Ordered for the SKU.
+
+* upperWhisker - The maximum data point that is not an outlier
+* lowwerWhisker - The minimum data point that is not an outlier
+

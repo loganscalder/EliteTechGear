@@ -1,0 +1,241 @@
+---
+title: "Wins and Losses"
+author: "Logan Calder"
+date: "December 21, 2015"
+output: pdf_document
+---
+
+This may be the most practical report that I have ever made. 
+
+# Product Wins and Losses
+For every product, let's total the number of campaings that have won and lost; 
+let's total the net loss from losing campains and the net gains from winning 
+campains; let's total the net profit from all campaigns.
+
+
+
+```{r read_in_data, cache = T, echo = F}
+dataFile = "/Users/loganscalder/Google Drive/EliteTechGear/Data/To Be Categorized/campaign-performance-report-2015-10-22.txt"
+
+x = read.delim(file = dataFile, 
+               nrows = 1000) # read in part of the data to get the colClasses
+classes = sapply(x, class)  # use the column classes to speed up the read in
+x = read.delim(file = dataFile, # read in all the data
+               colClasses = classes)
+rm(classes)
+rm(dataFile)
+```
+
+```{r observe_data, eval = F}
+head(x)
+
+```
+
+```{r}
+require(plyr)
+```
+
+
+```{r process_data, cache = T, echo = F}
+
+
+# step one: total by product-campaign
+adSummaryByProductCampaign = 
+    ddply(.data = x,
+          .var = .(Advertised.SKU, Campaign.Name),
+          .fun = summarise,
+          `total spent` = sum(Total.Spend),
+          # profit made within a day of click:
+          dayProfit = sum(X1.day.Ordered.Product.Sales.... - Total.Spend),
+          # return made within a day of click:
+          `%dayReturn` = dayProfit/`total spent` * 100,
+          # profit made within a month of click:
+          monthProfit = sum(X1.month.Ordered.Product.Sales.... - Total.Spend),
+          # was profit pos or negative? NA for 0:
+          `won in a day?` = {if(dayProfit == 0) NA else dayProfit > 0},
+          # was profit pos or negative? NA for 0:
+          `won in a month?` = {if (monthProfit == 0) NA else monthProfit > 0},
+          impressions = sum(Impressions),
+          # how many clicks:
+          clicks = sum(Clicks)
+          )
+
+# step two: total by product
+adSummaryByProduct = 
+    ddply(adSummaryByProductCampaign,
+          .var = .(Advertised.SKU),
+          .fun = summarise,
+          # how many campaigns with non zero profit
+          campaignsFought = sum(!is.na(`won in a month?`)), 
+          # we confidently consider these a loss:
+          `#campaignsLost(Month)` = sum(!`won in a month?`, na.rm = T),
+          # we confidently consider these a win:
+          `#campaignsWon(Day)` = sum(`won in a day?`, na.rm = T),
+          # we confidently say we lost this much $:
+          `$losingCampaigns(Month)` = sum(monthProfit[!`won in a month?`],
+                                            na.rm = T),
+          # we confidently say we won this much $:
+          `$winningCampaigns(Day)` = sum(dayProfit[`won in a day?`], na.rm = T),
+          # profit within day of click:
+          dayProfit = sum(dayProfit, na.rm = T),
+          # profit within month of click:
+          monthProfit = sum(monthProfit, na.rm = T),
+          `profit positive?` = dayProfit > 0
+          )
+
+```
+
+```{r check1}
+summary(adSummaryByProductCampaign)
+summary(adSummaryByProduct)
+
+```
+
+```{r prod_vs_returns, echo = F, fig.height= 9}
+require(ggplot2)
+
+
+pr = ggplot(data = adSummaryByProductCampaign, 
+            aes(x = `%dayReturn`, y = Advertised.SKU)) +
+    geom_point(aes(color = `won in a day?`, 
+                  size = abs(dayProfit)
+                  ),
+              alpha = .7) +
+    geom_line(aes(group = Advertised.SKU,
+                  ),
+              alpha = .5) + 
+    ggtitle("Campaign Returns per Product")
+pr
+```
+
+```{r, echo = F, fig.height= 10}
+pr_cut <- ggplot(subset(adSummaryByProductCampaign,
+                        subset = `%dayReturn` <1000),
+                 aes(x = `%dayReturn`, y = Advertised.SKU)) +
+    geom_point(aes(color = `won in a day?`, 
+                  size = abs(dayProfit)
+                  ),
+              alpha = .7) +
+    geom_line(aes(group = Advertised.SKU,
+                  ),
+              alpha = .5) +
+    ggtitle("Campaign Returns per Product - outlier omitted")
+pr_cut
+```
+
+```{r}
+require(ggvis)
+```
+
+```{r}
+adSummaryByProductCampaign %>%
+    ggvis(x = ~`%dayReturn`, y = ~Advertised.SKU, fill = ~factor(`won in a day?`)) %>% 
+    layer_points()
+```
+
+```{r visualize_summary, fig.width= 10, echo = F}
+
+# wins vs losses
+ggplot(adSummaryByProduct) + 
+    geom_point(aes(x = `#campaignsLost(Month)`,
+                   y = `#campaignsWon(Day)`),
+               alpha = .4,
+               position = "jitter") + 
+    ggtitle("# Campaigns won vs. # Campaigns lost per product") + 
+    coord_fixed(ratio = 1, xlim = c(-.5,10.5), ylim = c(-.5, 10.5))
+```
+
+```{r, fig.height = 6, echo = F}
+ggplot(adSummaryByProduct
+               ) + 
+    geom_point(aes(x = `$losingCampaigns(Month)`,
+                   y = `$winningCampaigns(Day)`,
+                   size = campaignsFought
+                   ),
+               alpha = .7
+               ) + 
+    geom_text(data = subset(adSummaryByProduct, 
+                            subset = campaignsFought >=7 |
+                                `$winningCampaigns(Day)` > 400 |
+                                !`profit positive?`),
+              aes(x = `$losingCampaigns(Month)`,
+                  y = `$winningCampaigns(Day)`,
+                  label = Advertised.SKU,
+                  color = `profit positive?`
+                  ),
+              vjust = -.5, 
+              size = 3,
+              angle = 45,
+              position = "identity"
+              ) +
+    scale_x_continuous(name = "net $ in losing campaigns") + 
+    scale_y_continuous(name = "net $ in winning campaigns") + 
+    ggtitle("$'s Won vs. $'s Lost per product") 
+              
+```
+
+```{r better_plot}
+wonLost = 
+    summarise(adSummaryByProductCampaign,
+              Advertised.SKU = Advertised.SKU,
+              Campaign.Name = Campaign.Name,
+              `$ if won` =  
+                  replace(dayProfit, 
+                          !`won in a day?` | is.na(`won in a day?`),
+                          NA
+                          ),  # formerly: dayProfit * `won in a day?`,
+              `$ if lost` = 
+                  replace(monthProfit,
+                          `won in a month?` | is.na(`won in a month?`),
+                          NA
+                          )  # formerly monthProfit * !`won in a month?`
+              )
+avg = 
+    ddply(wonLost,
+          .var = .(Advertised.SKU),
+          .fun = summarise,
+          `avg $ won` = mean(`$ if won`, na.rm = T),
+          `avg $ lost` = mean(`$ if lost`, na.rm = T))
+wonLostAvg = merge(wonLost, avg, by = "Advertised.SKU")
+head(wonLostAvg,10)
+
+window = 
+    ggplot(wonLostAvg) +
+    geom_blank(aes(x = `$ if lost`, y = `$ if won`))
+window
+
+plotWins = 
+    window + 
+    geom_line(aes(x = `avg $ lost`, 
+                  y = `$ if won`,
+                  group = Advertised.SKU
+                  ),
+              alpha = .7,
+              color = "green") +
+    geom_point(aes(x = `avg $ lost`,
+                   y = `$ if won`),
+               color = "green")
+plotWins
+
+plotLost = 
+    plotWins + 
+    geom_line(aes(x = `$ if lost`,
+                  y = `avg $ won`,  #"avg $ won"
+                  group = Advertised.SKU
+                  ),
+              color = "red"
+              )
+plotLost
+
+```
+
+
+```{r}
+require(ggvis)
+```
+
+```{r}
+
+```
+
+

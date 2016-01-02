@@ -1,0 +1,181 @@
+install.packages("maps")
+library(maps)
+install.packages("zipcode")
+library(zipcode)
+head(zipcode)
+data(zipcode)
+head(zipcode)
+?us.cities
+data(us.cities)
+head(us.cities)
+class(usa)
+data(usa)
+?usa
+data(usaMapEnv)
+map('usa')
+x = map('usa')
+class(x)
+names(x)
+lapply(x, head)
+head(zipcode)
+?sample
+set.seed = 123
+?runif
+place1 = function(x) rnorm(x, mean = runif(1,1, 40000), var = runif(1,30,100))
+place1(10)
+?rnorm
+runif(1,1, 40000)
+runif(1,30,100)
+place1 = function(x) {rnorm(x, mean = runif(1,1, 40000), var = runif(1,100,200))}
+place1(10)
+place1 = function(x) {rnorm(x, mean = runif(1,1, 40000), sd = runif(1,20,200))}
+place1(10)
+cieling(place1(10))
+floor(place1(10))
+floor(place1(10))
+floor(place1(10))
+floor(place1(10))
+place1 = function(x) {rnorm(x, mean = runif(1,1, 40000), sd = runif(1,100,300))}
+zipRows = floor(c(place1(500), place1(300), place1(200)))
+head(zipRows)
+sum(zipRows<0)
+sum(zipRows>nrow(zipcode))
+head(zipcode[zipRows,])
+dim(zipcode[zipRows,])
+points(-106.14,43.55)
+points(43,-106)
+sampleLat = zipcode[zipRows, "latitude"]
+points(sampleLong, sampleLat)
+sampleLong = zipcode[zipRows, "longitude"]
+sampleLat = zipcode[zipRows, "latitude"]
+points(sampleLong, sampleLat)
+zipRows = floor(c(place1(500), place1(300), place1(200)), place1(50), place1(50), runif(200,1, 44336))
+zipRows = floor(c(place1(500), place1(300), place1(200), place1(50), place1(50), runif(200,1, 44336)))
+head(zipRows)
+sum(zipRows<0)
+sum(zipRows>nrow(zipcode))
+dim(zipcode[zipRows,])
+sampleLong = zipcode[zipRows, "longitude"]
+sampleLat = zipcode[zipRows, "latitude"]
+points(sampleLong, sampleLat)
+map('usa')
+place1 = function(x) {rnorm(x, mean = runif(1,1, 40000), sd = runif(1,100,300))}
+zipRows = floor(c(place1(500),
+place1(300),
+place1(200),
+place1(50),
+place1(50),
+runif(200,1, 44336)))
+head(zipRows)
+sum(zipRows<0)
+sum(zipRows>nrow(zipcode))
+dim(zipcode[zipRows,])
+sampleLong = zipcode[zipRows, "longitude"]
+sampleLat = zipcode[zipRows, "latitude"]
+points(sampleLong, sampleLat)
+?plot
+?points
+plot(1:16,1, pch = 1:16)
+plot(1:16, pch = 1:16)
+points(sampleLong, sampleLat, pch = 16, col = "blue", alpha = 1/10)
+col2rgb("blue")
+?rgb
+points(sampleLong, sampleLat, pch = 16, col = (0,0,1,.10), alpha = 1/10)
+points(sampleLong, sampleLat, pch = 16, col = rgb(0,0,1,.10), alpha = 1/10)
+points(sampleLong, sampleLat, pch = 16, col = rgb(0,0,1,.10))
+set.seed = 123
+map('usa')
+place1 = function(x) {rnorm(x, mean = runif(1,1, 40000), sd = runif(1,100,300))}
+zipRows = floor(c(place1(500),
+place1(300),
+place1(200),
+place1(50),
+place1(50),
+runif(200,1, 44336)))
+head(zipRows)
+sum(zipRows<0)
+sum(zipRows>nrow(zipcode))
+dim(zipcode[zipRows,])
+sampleLong = zipcode[zipRows, "longitude"]
+sampleLat = zipcode[zipRows, "latitude"]
+points(sampleLong, sampleLat, pch = 16, col = rgb(0,0,1,.10))
+col2rgb("blue")
+col2rgb("green")
+zipRows = floor(c(place1(500),
+place1(300),
+place1(200),
+place1(50),
+place1(50),
+runif(200,1, 44336))
+)
+sum(zipRows<0)
+sum(zipRows>nrow(zipcode))
+sampleLong = zipcode[zipRows, "longitude"]
+sampleLat = zipcode[zipRows, "latitude"]
+col2rgb("green")
+points(sampleLong, sampleLat, pch = 16, col = rgb(0,1,0,.10))
+zipRows = floor(c(place1(500),
+place1(300),
+place1(200),
+place1(50),
+place1(50),
+runif(200,1, 44336))
+)
+sum(zipRows<0)
+sum(zipRows>nrow(zipcode))
+sampleLong = zipcode[zipRows, "longitude"]
+sampleLat = zipcode[zipRows, "latitude"]
+col2rgb("green")
+points(sampleLong, sampleLat, pch = 16, col = rgb(1,0,0,.10))
+?legend
+legend("bottom", legend = c("time1", "time2", "time2"), col = c("blue", "green", "red"))
+legend("bottom", legend = c("time1", "time2", "time2"), pch = 16,col = c("blue", "green", "red"))
+legend("topleft", legend = c("time1", "time2", "time2"), pch = 16,col = c("blue", "green", "red"))
+map("usa")
+title(main = "Where do we sell?")
+place1 = function(x) {rnorm(x, mean = runif(1,1, 40000), sd = runif(1,100,300))}
+zipRows = floor(c(place1(500),
+place1(300),
+place1(200),
+place1(50),
+place1(50),
+runif(200,1, 44336)))
+head(zipRows)
+sum(zipRows<0)
+sum(zipRows>nrow(zipcode))
+dim(zipcode[zipRows,])
+sampleLong = zipcode[zipRows, "longitude"]
+sampleLat = zipcode[zipRows, "latitude"]
+points(sampleLong, sampleLat, pch = 16, col = rgb(0,0,1,.10))
+col2rgb("blue")
+zipRows = floor(c(place1(500),
+place1(300),
+place1(200),
+place1(50),
+place1(50),
+runif(200,1, 44336))
+)
+sum(zipRows<0)
+sum(zipRows>nrow(zipcode))
+sampleLong = zipcode[zipRows, "longitude"]
+sampleLat = zipcode[zipRows, "latitude"]
+col2rgb("green")
+points(sampleLong, sampleLat, pch = 16, col = rgb(0,1,0,.10))
+zipRows = floor(c(place1(500),
+place1(300),
+place1(200),
+place1(50),
+place1(50),
+runif(200,1, 44336))
+)
+sum(zipRows<0)
+sum(zipRows>nrow(zipcode))
+sampleLong = zipcode[zipRows, "longitude"]
+sampleLat = zipcode[zipRows, "latitude"]
+col2rgb("green")
+points(sampleLong, sampleLat, pch = 16, col = rgb(1,0,0,.10))
+legend("topleft", legend = c("time1", "time2", "time2"), pch = 16,col = c("blue", "green", "red"))
+legend("topleft", legend = c("time1", "time2", "time3"), pch = 16,col = c("blue", "green", "red"))
+title(sub = "Woot woot woot woot woot woot, Party, Yeah!")
+title(xlab = "Woot woot woot woot woot woot, Party, Yeah!")
+legend("topleft", legend = c("prod1", "prod2", "prod3"), pch = 16,col = c("blue", "green", "red"))

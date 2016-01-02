@@ -1,0 +1,218 @@
+---
+title: "Untitled"
+author: "Logan Calder"
+date: "December 18, 2015"
+output: html_document
+runtime: shiny
+---
+
+```{r load_packages, message = F, echo = F}
+require(plyr)
+require(ggplot2)
+```
+
+
+```{r merge_reports, cache = T}
+# Searh term reports cover 60 days. Because tbey count things per
+# search term over those 60 days, we cannont merge overlapping reports
+# it may also be important to merge search term reports with campaign 
+# reports so that we can see how long a campaign has been active...
+
+# It's convenient to have R find the files. We just have to do our housekeeping
+
+#======
+# Find the Reports
+#======
+dataDir = 
+    "/Users/loganscalder/Google Drive/EliteTechGear/Data/Advertising/Search Term Reports" 
+fileNames = list.files(
+    path = dataDir,
+    pattern = ".txt$"  # "$" means the empty string follows the previous string
+    )
+# I will read in the .txt files because these are less likely to be edited.
+# the .txt files also contain the date and url of the download.
+
+#========
+# Read in the reports
+#=======
+
+# read in the .txt files
+search_term_reports = lapply(paste0(dataDir,"/",fileNames), read.delim,
+                 na.strings = "N/A")
+names(search_term_reports) <- substr(fileNames,
+                         start = 20,
+                         stop = 29)
+
+# check out the reports
+lapply(search_term_reports, names)
+lapply(search_term_reports, head)
+lapply(search_term_reports, summary)
+sapply(search_term_reports, function(x){sapply(x, class)})
+### Why are there 170 NA's in the 2015-08-13 report? 
+
+# change the dates to Date class
+ # Date Change Test:
+?transform
+dateTest = transform(head(search_term_reports[[1]]),
+          First.Day.of.Impression = 
+              as.Date(First.Day.of.Impression,
+                      format = "%m/%d/%Y"),
+          Last.Day.of.Impression = 
+              as.Date(Last.Day.of.Impression,
+                      format = "%m/%d/%Y")
+          )
+search_term_reports <-
+    lapply(search_term_reports,
+           transform,
+           First.Day.of.Impression = 
+              as.Date(First.Day.of.Impression,
+                      format = "%m/%d/%Y"),
+           Last.Day.of.Impression = 
+              as.Date(Last.Day.of.Impression,
+                      format = "%m/%d/%Y")
+           )
+lapply(search_term_reports[[1]], class)
+# ==========
+# Test the reports for overlap
+# ==========
+# Maybe not so important right now...
+
+# =======
+# Combine the tables together
+# ======
+allData = do.call(rbind, search_term_reports)
+mergedData = 
+    ddply(.data = allData,
+          .var = .(Campaign.Name, Ad.Group.Name,
+                   Customer.Search.Term, Keyword,
+                   Match.Type),
+          .fun = summarise,
+          Targeting_Type = if(Keyword[1] == "*"){"Auto"}else{"Manual"},
+          First_Day_of_Impression = min(First.Day.of.Impression),
+          Last_Day_of_Impression = max(Last.Day.of.Impression),
+          Impressions = sum(Impressions),
+          Clicks = sum(Clicks),
+          CTR = Clicks/Impressions,
+          Total_Spend = sum(Total.Spend),
+          Average_CPC = Total_Spend/Clicks,
+          Orders_Within_1_Week = sum(Orders.placed.within.1.week.of.a.click),
+          Sales_Within_1_Week = sum(Product.Sales.within.1.week.of.a.click),
+          Same_SKU_Orders_Within_1_week = 
+              sum(Same.SKU.units.Ordered.within.1.week.of.click),
+          Same_SKU_Sales_Within_1_Week = 
+              sum(Same.SKU.units.Product.Sales.within.1.week.of.click),
+          Profit = Sales_Within_1_Week-Total_Spend
+          )
+```
+
+```{r shiny_app, echo = F}
+library(shiny)
+
+num = sapply(mergedData, is.numeric)
+numcols = names(mergedData)[num]
+
+ui <- fluidPage(
+    # choose to subset data
+    checkboxGroupInput(inputId = "exMatch.Type", 
+                       label = "Exclude Match Types",
+                       choices = unique(as.character(mergedData$Match.Type))),
+    checkboxGroupInput(inputId = "exTargeting_Type", 
+                       label = "Exclude Targeting Types",
+                       choices = unique(mergedData$Targeting_Type)),
+    # choose graphical aesthetics
+    selectInput(inputId = "xaxis", label = "X axis variable",
+                choices = numcols, 
+                selected = "CTR"),
+    selectInput(inputId = "yaxis", label = "Y axis variable",
+                choices = numcols, 
+                selected = "Profit"),
+    selectInput(inputId = "fill", label = "Fill variable",
+                choices = names(mergedData),
+                selected = "Impressions"),
+    selectInput(inputId = "color", label = "Color variable",
+                choices = names(mergedData), 
+                selected = "Targeting_Type"),
+    selectInput(inputId = "size", label = "Point size variable",
+                choices = names(mergedData),
+                selected = "CTR"),
+    
+    uiOutput(outputId = "experiment"),
+    plotOutput(outputId = "scatterplot"),
+    dataTableOutput(outputId = "dataHead")
+    
+    )
+
+displayData = subset(mergedData,
+                         subset = {
+                             !(as.character(Match.Type) %in% input$exMatch.Type) &
+                                 !(Targeting_Type %in% input$exTargeting_Type)
+                         })
+splot = ggplot(displayData) + geom_point(aes(x = input$xaxis,
+                                             y = input$yaxis,
+                                             fill = input$fill,
+                                             color = input$color,
+                                             size = input$size))
+
+server <- function(input, output){
+    # Subset Data
+    displayData = reactive(subset(mergedData,
+                         subset = {
+                             !(as.character(Match.Type) %in% input$exMatch.Type) &
+                                 !(Targeting_Type %in% input$exTargeting_Type)
+                         })
+                         )
+
+    output$experiment <- renderUI(input$exMatch.Type)
+    output$dataHead <- renderDataTable(displayData)
+#     output$scatterplot <- renderPlot({
+#         splot <- ggplot(displayData) + 
+#             geom_point(aes(x = input$xaxis,
+#                            y = input$yaxis,
+#                            fill = input$fill,
+#                            color = input$color,
+#                            size = input$size
+#                            )
+#                        )
+#         print(splot)
+#         })
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+```{r eval = F}
+which(LETTERS == "R")
+which(ll <- c(TRUE, FALSE, TRUE, NA, FALSE, FALSE, TRUE)) #> 1 3 7
+names(ll) <- letters[seq(ll)]
+which(ll)
+which((1:12)%%2 == 0) # which are even?
+which(1:10 > 3, arr.ind = TRUE)
+
+( m <- matrix(1:12, 3, 4) )
+div.3 <- m %% 3 == 0
+which(div.3)
+which(div.3, arr.ind = TRUE)
+rownames(m) <- paste("Case", 1:3, sep = "_")
+which(m %% 5 == 0, arr.ind = TRUE)
+
+dim(m) <- c(2, 2, 3); m
+which(div.3, arr.ind = FALSE)
+which(div.3, arr.ind = TRUE)
+
+vm <- c(m)
+dim(vm) <- length(vm) #-- funny thing with  length(dim(...)) == 1
+which(div.3, arr.ind = TRUE)
+
+
+
+#### switch()
+centre <- function(x, type) {
+  switch(type,
+         mean = mean(x),
+         median = median(x),
+         trimmed = mean(x, trim = .1))
+}
+t1 = c(1:10,-5:15, rep(1,10))
+centre(t1, "trimmed")
+```
+

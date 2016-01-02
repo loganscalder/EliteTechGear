@@ -1,0 +1,21 @@
+Amendments for current version
+Less sentsitive to outliers
+More output: sample size, total over last 90 days, goodness of fit
+
+
+Questions to discuss with mitch
+
+running through code:
+Better with outliers?
+When inventory reports two of the same SKU, I'm adding them together
+
+
+Other:
+  I'd like to recommend how many products you should send when you restock. But I don't know how this should be calculated. What I need to know (and maybe these things will be variable?) is how long will shipments take (60 days?) and how many days worth of product do you want in store when the shipment arrives? In other words, how often do you want to be sending shipments for a product?
+
+
+
+
+Ammendments for future versions:
+Measure the fit of each model, alert the user to models with poor fits. Print the plots of orders for those models
+Include outliers in plots of points and best fit line (best fit line not determined by outliers)

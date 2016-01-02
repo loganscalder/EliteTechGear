@@ -1,0 +1,129 @@
+---
+title: "KPI Report Plan"
+output: html_document
+---
+# Free Speech
+Hey Champ!
+
+# KPI's by SKU
+```{r, include = F}
+# Load the necessary SKU KPI data
+source("listForKpiReport.R")
+
+input = listForKpiReport()
+```
+
+
+## Top 20%
+Here's graphs of the top 20%
+
+```{r echo = F}
+input$topSales
+input$topItems
+````
+
+Here are tables of the top 20%
+a row for every time period, a column for every sku, organized alphabetically for the KPI sales
+could we do sales and items ordered as a pair?
+``` {r, echo = F}
+
+```
+
+```{r, results='asis'}
+knitr::kable(head(mtcars))  # Makes a table
+```
+
+
+## Bottom 80%
+Here are the graphs of the not top 20%
+
+``` {r echo = F}
+input$bottomSales
+```
+
+``` {r echo = F}
+input$bottomItems
+```
+
+And here is the table of the KPI's for aggregate
+
+Weeks         | SKU 1         | SKU 2
+------------- | ------------- | ---------
+week ..       | Cell 1        | cell 2
+week..        | Cell x        | cell y
+
+``` {r}
+
+```
+
+
+
+
+# company totals
+Thennnnn...
+A graph of the daily sales for 56 days
+
+```{r echo = F}
+with(input$dailyTotals,
+     plot(x = Date,
+          y = Ordered.Product.Sales, 
+          type = "o", 
+          main = "Total daily sales for 56 days",
+          ylab = "Daily Sales",
+          xlab = "Date"))
+```
+
+A graph of the weekly sales for  a year
+
+```{r echo = F}
+with(input$weeklyTotals,
+     plot(x = Week,
+          y = Ordered.Product.Sales, 
+          type = "o", 
+          main = "Total weekly  sales for 52 weeks",
+          ylab = "Weekly Sales",
+          xlab = "Week"))
+```
+
+And here is the table of KPI's for the company over different time periods
+
+period         | KPI 1         | KPI 2
+------------- | ------------- | ---------
+Thursday      | Cell 1        | cell 2
+7 days        | Cell x        | cell y
+14 days       | Cell z        | cell w
+
+## Comparing to last year same time
+
+```{r echo = F}
+if(file.exists(
+  paste0("lastYearToWeek",weeks[length(weeks)],".csv"))){
+source("Read in last year weekly totals.R")  #lastYear
+#plot this year
+with(input$weeklyTotals,
+     plot(Week, Ordered.Product.Sales,
+          xlim = c(as.Date("2015-01-01"),max(input$weeklyTotals$Week)),
+          ylim = c(0, max(Ordered.Product.Sales)),
+          ylab = "weekly sales ($)",
+          type = "o",
+          lwd = 1.5,
+          main = "Weekly Sales, this year vs. last"))
+#add last year
+with(lastYear,
+     points((Week + 365), Ordered.Product.Sales,
+     type = "l",
+     lty = 6))
+}
+
+```
+
+
+# Fun Feature from Friday
+While not always centered around KPI's, this section will practice Logan's skills and hopefully stimulate some interesting analysis. Maybe I'll place it in random places so that it doesn't get skipped out of habit.
+I'll need to plan on doing this on fridays I think. I should also paste a preview of what will be coming the future week.
+Am I a bit unfocused?
+
+# Margins 
+This should probably be placed with the kpi's by sku, but a section that emphasizes it won't be bad
+
+# Inventory

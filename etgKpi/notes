@@ -1,0 +1,56 @@
+KPI brainstorm:
+
+
+
+A KPI report that uses weekly data for the past 8 weeks will have 8 files.  If we want to include reports for 15, 30, or 60 days, more files will need to be downloaded.  
+
+I guess I just want some elegant code.
+To begin with, I'll focus on the past 8 weeks. 
+The names of the 8 follow a convenient format.
+I can read them in...yes, pretty conveniently,
+Then put them in a list for convenience.
+To each data frame, add a column giving the date
+Then I can union the data frames together.
+That great data frame will be useful for showing weekly trends
+
+
+Questions:
+Did the price of ETG-STG-8P-1 change between weeks 17 and 18?
+I need information on the Cost we put into every product. I need to tell you the margin that you're making on every product. (in the future, consider the margin of every order...)
+Currently itemsPerDay = UnitsOrdered/ProductSales
+          is that as intended?
+          what is UnitsOrdered vs. TotalOrderItems?
+
+
+weekly URLS by ASIN
+25
+open "https://sellercentral.amazon.com/gp/site-metrics/report.html?#&cols=/c0/c1/c2/c3/c4/c5/c6/c7/c8/c9/c10/c11/c12&sortColumn=13&filterFromDate=06/15/2015&filterToDate=06/21/2015&fromDate=06/15/2015&toDate=06/21/2015&reportID=102:DetailSalesTrafficBySKU&sortIsAscending=0&currentPage=0&dateUnit=1&viewDateUnits=ALL&runDate="
+
+24
+open "https://sellercentral.amazon.com/gp/site-metrics/report.html?#&cols=/c0/c1/c2/c3/c4/c5/c6/c7/c8/c9/c10/c11/c12&sortColumn=13&filterFromDate=06/08/2015&filterToDate=06/14/2015&fromDate=06/08/2015&toDate=06/14/2015&reportID=102:DetailSalesTrafficBySKU&sortIsAscending=0&currentPage=0&dateUnit=1&viewDateUnits=ALL&runDate="
+
+23
+open "https://sellercentral.amazon.com/gp/site-metrics/report.html?#&cols=/c0/c1/c2/c3/c4/c5/c6/c7/c8/c9/c10/c11/c12&sortColumn=13&filterFromDate=05/31/2015&filterToDate=06/06/2015&fromDate=05/31/2015&toDate=06/06/2015&reportID=102:DetailSalesTrafficBySKU&sortIsAscending=0&currentPage=0&dateUnit=1&viewDateUnits=ALL&runDate="
+
+22
+open "https://sellercentral.amazon.com/gp/site-metrics/report.html?#&cols=/c0/c1/c2/c3/c4/c5/c6/c7/c8/c9/c10/c11/c12&sortColumn=13&filterFromDate=05/24/2015&filterToDate=05/30/2015&fromDate=05/24/2015&toDate=05/30/2015&reportID=102:DetailSalesTrafficBySKU&sortIsAscending=0&currentPage=0&dateUnit=1&viewDateUnits=ALL&runDate="
+
+21
+open "https://sellercentral.amazon.com/gp/site-metrics/report.html?#&cols=/c0/c1/c2/c3/c4/c5/c6/c7/c8/c9/c10/c11/c12&sortColumn=13&filterFromDate=05/17/2015&filterToDate=05/23/2015&fromDate=05/17/2015&toDate=05/23/2015&reportID=102:DetailSalesTrafficBySKU&sortIsAscending=0&currentPage=0&dateUnit=1&viewDateUnits=ALL&runDate="
+
+20
+open "https://sellercentral.amazon.com/gp/site-metrics/report.html?#&cols=/c0/c1/c2/c3/c4/c5/c6/c7/c8/c9/c10/c11/c12&sortColumn=13&filterFromDate=05/10/2015&filterToDate=05/16/2015&fromDate=05/10/2015&toDate=05/16/2015&reportID=102:DetailSalesTrafficBySKU&sortIsAscending=0&currentPage=0&dateUnit=1&viewDateUnits=ALL&runDate="
+
+19
+open "https://sellercentral.amazon.com/gp/site-metrics/report.html?#&cols=/c0/c1/c2/c3/c4/c5/c6/c7/c8/c9/c10/c11/c12&sortColumn=13&filterFromDate=05/03/2015&filterToDate=05/09/2015&fromDate=05/03/2015&toDate=05/09/2015&reportID=102:DetailSalesTrafficBySKU&sortIsAscending=0&currentPage=0&dateUnit=1&viewDateUnits=ALL&runDate="
+
+18
+open "https://sellercentral.amazon.com/gp/site-metrics/report.html?#&cols=/c0/c1/c2/c3/c4/c5/c6/c7/c8/c9/c10/c11/c12&sortColumn=13&filterFromDate=04/26/2015&filterToDate=05/02/2015&fromDate=04/26/2015&toDate=05/02/2015&reportID=102:DetailSalesTrafficBySKU&sortIsAscending=0&currentPage=0&dateUnit=1&viewDateUnits=ALL&runDate="
+
+17
+open "https://sellercentral.amazon.com/gp/site-metrics/report.html?#&cols=/c0/c1/c2/c3/c4/c5/c6/c7/c8/c9/c10/c11/c12&sortColumn=13&filterFromDate=04/19/2015&filterToDate=04/25/2015&fromDate=04/19/2015&toDate=04/25/2015&reportID=102:DetailSalesTrafficBySKU&sortIsAscending=0&currentPage=0&dateUnit=1&viewDateUnits=ALL&runDate="
+
+16
+open "https://sellercentral.amazon.com/gp/site-metrics/report.html?#&cols=/c0/c1/c2/c3/c4/c5/c6/c7/c8/c9/c10/c11/c12&sortColumn=13&filterFromDate=04/12/2015&filterToDate=04/18/2015&fromDate=04/12/2015&toDate=04/18/2015&reportID=102:DetailSalesTrafficBySKU&sortIsAscending=0&currentPage=0&dateUnit=1&viewDateUnits=ALL&runDate="
+
+daily totals from week 23
