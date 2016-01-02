@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.html
+.pdf
+_cache/
+_files/
+.csv
+.jpeg
+.png
+.xml
+.xls
+.gsheet
