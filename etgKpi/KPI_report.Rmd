@@ -85,7 +85,11 @@ Thursday      | Cell 1        | cell 2
 
 ## Cool Stuff
 
-```{r map, warning = F}
+you're featured in logan's portfolio!
+
+
+
+```{r map, warning = F,echo = F, eval = F}
 require(maps)
 old.par <- par()
 par(mar = c(0,0,6,0) + .1)

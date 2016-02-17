@@ -1,5 +1,5 @@
 FromDate = 
-  as.Date("2015-09-06") - seq(from = 0, to = 91-7, by = 7)
+  as.Date("2016-01-10") - seq(from = 0, to = 91-7, by = 7)
 FromDate = FromDate[order(FromDate)]
 ToDate = 
   FromDate + 6
@@ -21,3 +21,4 @@ urls =
   )
 
 write.csv(urls, "urls.csv")
+

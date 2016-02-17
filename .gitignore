@@ -61,3 +61,11 @@ No Version Control/
 *.log
 *.sql
 *.sqlite
+.Rproj.user
+
+# Media # 
+#########
+*.m4a
+*.mp3
+*.mp4
+*.dbf
