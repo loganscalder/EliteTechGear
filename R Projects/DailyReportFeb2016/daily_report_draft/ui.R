@@ -1,112 +1,55 @@
 # Daily Report Draft
 shinyUI(fluidPage(
-    titlePanel("ETG Daily Report"),
-    tabsetPanel(
-        tabPanel("Welcome",
-                 sidebarLayout(
-                     sidebarPanel(h5("Left"),
-                                  p("The tabs above will let you navigate
-                                    to different parts of your daily report."),
-                                  p("On the left of each page of the report will be parameters
-                                    that you can control (dates and products
-                                    to look at, etc.)"),
-                                  p("On the right will be the graphical reports")),
-                     mainPanel(h2("Right"),
-                               p("If needed, there can be tabs underneath each
-                                 page in the report"),
-                               tabsetPanel(
-                                   tabPanel("tab1",
-                                            p("One thing to look at")),
-                                   tabPanel("tab2",
-                                            p("Another thing to look at"))
-                         )
-                     )
-                 )),
-        tabPanel("Advertising"),
-        tabPanel("Pretend BSR",
-                 sidebarLayout(
-                     
-                     sidebarPanel(
-                         h3("Upload your file"),
-                         p(em('The file here should be a csv
-                                  with headings in the first row, data in 
-                                  the rows that follow, and nothing else.
-                                  The headings should at least include'),
-                           strong("Date", "SKU"), em("and"), strong("BSR")),
-                         fileInput("bsrFiles", label = "Upload your BSR file",
-                                   multiple = F),
-                         helpText("and a looky-loo into the file upload"),
-                         verbatimTextOutput("fileFrame"),
-                         
-                         h3("Control yourself"),
-                         dateRangeInput("bsrDate", "Choose your date range",
-                                        start = min(bsr$Date),
-                                        end = max(bsr$Date)),
-                         helpText("Let me know what format you'd like to enter
-                                  your date"),
-                         
-                         dateRangeInput("bsrDateExclude1", 
-                                   "Choose date ranges to exclude",
-                                   start = "1993-08-09",
-                                   end = "1993-08-09"
-                         ),
-                         dateRangeInput("bsrDateExclude2",
-                                        label = NULL,
-                                        start = "1993-08-09",
-                                        end = "1993-08-09"
-                         ),
-                         
-                         selectInput("bsrSkus", 
-                                     "Choose the products you want to see",
-                                     choices = c(`All Products` = T,
-                                                 "ETG-123-ABC",
-                                                 "ETG-456-DEF"),
-                                     selected = T,
-                                     multiple = T)
-                     ),
-                     mainPanel(
-                         h3("Graphics here"),
-                         #ggvisOutput("bsrTimePlot"),
-                         ggvisOutput(plot_id = "bsrTimePlot")
-                     )
-                 )),
-        tabPanel("Sales and Such",
-                 fluidRow(
-                     column(3,
-                            h3("Upload your files"),
-                            helpText("This will likely be several files tracking
-                                 daily sales and units ordered per sku. More
-                                 details coming..."),
-                            fileInput("salesFiles", label = "upload your file",
-                                      multiple = T)
-                     ),
-                     column(9,
-                            h3("See your stuff"),
-                            ggvisOutput("bsrTimePlot"))
-                 
-                 
-                 ),
-                 fluidRow(
-                     
-                        h3("Control yourself"),
-                        column(3,
-                        dateRangeInput("salesDates", "Choose your date range",
-                                       start = min(bsr$Date),
-                                       end = max(bsr$Date)),
-                        dateInput("salesDateExclude", 
-                                  "Choose any dates to exclude",
-                                  value = "1993-08-09"
-                        )),
-                        column(4,
-                        selectInput("bsrSkus", 
-                                    "Choose the products you want to see",
-                                    choices = c(`All Products` = T,
-                                                "ETG-123-ABC",
-                                                "ETG-456-DEF"),
-                                    selected = T,
-                                    multiple = T)
-                 ))),
-        tabPanel("Inventory")
-    )
+    titlePanel("ETG DailyReport"),
     
+    tabsetPanel(
+        tabPanel("Welcome"),
+        
+        tabPanel("BSR",
+            fluidPage(
+                sidebarLayout(
+                    sidebarPanel(
+                        h3("Upload your data"),
+                        fileInput("bsrFile", "Upload BSR file"),
+                        verbatimTextOutput("bsrFileLook"),
+                        helpText("Help Text"),
+                        
+                        h3("Filter your data"),
+                        dateRangeInput("bsrDates", "Choose your date range",
+                            start = Sys.Date() - 365,
+                            end = Sys.Date())#,
+                        #selectInput("bsrSkus", label = "Choose your SKU's")
+                        
+                    ),
+                    
+                    mainPanel(
+                        tabsetPanel(
+                            tabPanel("Uploaded Data",
+                                dataTableOutput("bsrTable"),
+                                p()
+                                ),
+                            
+                            tabPanel("Data Visual",
+                                ggvisOutput("bsrVis"))
+                        )
+                    )
+                )
+            ))
+    )
 ))
+
+
+# There are several fishy things I see happening with shiny here.
+# Is there something I can do to keep myself more sure and organized?
+# I guess when I see a problem that I don't expect, I should make
+# simple examples, in another document that will let me test things
+# out. 
+# One fishy thing I consider a problem with this preview version
+# of RStudio: it appears that packages aren't being loaded when I
+# run shiny. I kept receiving the error that ggvisOutput() could not
+# be found. I then loaded the package in my console, re ran the app, and
+# everything worked fine. 
+# On the testing docket: 
+# test packages being loaded.
+# Downloading file, 
+# uploading and processing a file.
